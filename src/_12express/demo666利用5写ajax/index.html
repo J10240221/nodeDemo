@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <!-- http://127.0.0.1:8888/process_post -->
+  <form action="" method="POST" id="form">
+    First Name:
+    <input type="text" name="first_name">
+    </br>
+    Last Name：
+    <input type="text" name="last_name">
+    <input type="submit" value="提交" />
+  </form>
+  <script>
+    document.querySelector("#btn").addEventListener('click', btnClick, false);
+    document.querySelector("#form").addEventListener('submit', handleSubmit, false);
+
+    function handleSubmit(e) {
+      event.preventDefault();
+      // TODO: 可以改为 ajax 或者 fetch 实现
+      debugger;
+      console.log(event)
+      console.log(event.target)
+    }
+  </script>
+</body>
+
+</html>
