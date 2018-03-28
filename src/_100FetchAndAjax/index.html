@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+
+  <form action="" onsubmit="handleSubmit(event)">
+    <input type="text" name="name">
+    <input type="text" name="age">
+    <button>发送fetch请求</button>
+  </form>
+
+  <h1>后台返回的结果</h1>
+  <div id="showFetchData"></div>
+
+  <button onclick="handleAjax(event)">发送Ajax请求</button>
+  <h1>后台返回的结果</h1>
+  <div id="showAjaxData"></div>
+
+  <script>
+    function addRenderView(eleId, json) {
+      const ele = document.getElementById(eleId);
+      ele.innerHTML += `<p>${JSON.stringify(json)}</p>`;
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const data = serializeFormData();
+      load('http://127.0.0.1:8888/promisePost', { method: "POST", body: JSON.stringify(data) })
+        .then(function (response) {
+          return response.json();
+        })
+        .then(json => {
+          addRenderView('showFetchData', json);
+        })
+        .catch(e => console.error(e));
+    }
+
+    function serializeFormData(formCssSelector = "form") {
+      const items = document.querySelectorAll(`${formCssSelector} *[name]`);
+      const itemsArr = Array.prototype.slice.call(items);
+      const dataJsonObj = itemsArr.reduce((accum, currObj, index, array) => {
+        return { ...accum, [currObj.name]: currObj.value };
+      }, {});
+      return dataJsonObj;
+    }
+
+    function load(url, option) {
+      return fetch(url, option);
+    }
+
+    // 发送原生Ajax请求
+    function handleAjax() {
+      const xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState == 4) {
+          if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+            addRenderView('showAjaxData', JSON.parse(xhr.responseText));
+          } else {
+            console.error('xhr unSuccess');
+          }
+        }
+      };
+
+      xhr.open('get', "http://127.0.0.1:8888/promiseGet?a=2", true);
+      
+      xhr.send();
+    }
+
+  </script>
+</body>
+
+</html>
