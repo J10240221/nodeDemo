@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>JSONP</title>
+</head>
+
+<body>
+
+  <div>
+    <h1>JSONP 的实现方式如下</h1>
+    <ul>
+      <li>
+        请求的时候，通过创建一个script标签，标签地址指向要请求的地址，浏览器自行发起get请求(为什么是get？因为引入资源都是用的get请求，也没有设置请求格式的机会啊)
+      </li>
+      <li>拼上跟后台沟通好的函数的键值对（这里我们约定 key = callback）</li>
+      <li>后台会返回callback对应值的函数，并把数据放在函数的参数当中；这样就能实现请求得到数据的效果</li>
+      <li>最后再删除script标签</li>
+    </ul>
+    <hr/>
+
+    <h2>输入半径，即可查询圆的周长</h2>
+    <form action="" onsubmit="handleJsonp(event)">
+      <label for="ageIpt">半径</label>
+      <input type="number" name='rad' id='radIpt'>
+    </form>
+  </div>
+  <button onclick="handleJsonp(event)">通过Jsonp实现跨域</button>
+
+  <div style="color: red">
+    <p>结果为(这里是node后台计算返回的，不信你看控制台)：</p>
+    <p id="result"></p>
+  </div>
+
+  <script>
+
+    function handleJsonp(data) {
+      const radIptEle = document.getElementById('radIpt');
+      // 获取输入的 半径值
+      const rad = radIptEle.value;
+
+      // 创建 script 标签
+      const script = document.createElement('script');
+      script.src = `http://127.0.0.1:8888/get?rad=${rad}&callback=handleRes`;
+
+      // 提前绑定 onload 事件， 当加载完毕后，此 script 的任务已经完成，删除即可
+      script.onload = function (event) {
+        document.body.removeChild(script);
+      }
+
+      document.body.appendChild(script);
+    }
+
+    // 当 script 标签 onload 的时候，浏览器自行执行返回的代码， 也就执行了 handleRes 函数
+    function handleRes(response) {
+      const result = document.querySelector('#result');
+      const { scale } = response;
+      result.innerHTML = scale.toFixed(2);
+    }
+
+  </script>
+</body>
+
+</html>
